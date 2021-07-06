@@ -55,9 +55,7 @@ resource digitalocean_droplet nginx {
         ]
     }
 
-    // generate the nginx.conf
-
-    // copy the file to droplet /etc/nginx/nginx.conf
+    // copy the generate nginx.conf to droplet /etc/nginx/nginx.conf
 
     // restart nginx
     // /usr/sbin/nginx -s reload
@@ -76,6 +74,8 @@ resource local_file externl_ports {
         ports = local.ext_ports
     })
 }
+
+// generate the nginx.conf
 
 // outputs
 output image_name {
