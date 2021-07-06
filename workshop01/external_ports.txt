@@ -1,0 +1,4 @@
+# these are my ports
+    32774/tcp
+    32773/tcp
+    32775/tcp
