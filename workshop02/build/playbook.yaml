@@ -1,9 +1,25 @@
-- name: Unpack and install code-server
-  host: all # or default
-  vars:
-    cs_version: "3.10.2"
+- name: Setup up website
+  hosts: all # or default
   tasks:
-  - name: download code server package
-    get_url:
-      url: "wget https://github.com/cdr/code-server/releases/download/v{{ cs_version }}/code-server-{{ cs_version }}-linux-amd64.tar.gz"
-      dest: "/root/cs-{{ cs_version }}.tgz"
+  - name: Install nginx
+    apt:
+      # apt update
+      update_cache: yes
+      name: nginx
+      state: present
+  - name: Start the service
+    systemd:
+      name: nginx
+      enabled: yes
+      state: started
+  - name: delete the files in /var/www/html directory but not the directory
+    shell:
+      chdir: /var/www/html
+      cmd: rm -r *
+  - name: copy the 2 local files index.[html,css] over to /var/www/html
+    copy:
+      src: "./{{ item }}"
+      dest: "/var/www/html/{{ item }}"
+    loop:
+    - index.html
+    - index.css
