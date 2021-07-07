@@ -1,4 +1,4 @@
-data digitalocean_ssh_key mykey {
+data digitalocean_ssh_key fred {
     name = "fred"
 }
 
@@ -11,8 +11,7 @@ resource digitalocean_droplet nginx {
     size = var.droplet_size
     region = var.droplet_region
 
-    ssh_keys = [ digitalocean_ssh_key.mykey.id ]
-
+    ssh_keys = [ data.digitalocean_ssh_key.fred.id ]
 }
 
 // local variables, not available outside of this 'module'
