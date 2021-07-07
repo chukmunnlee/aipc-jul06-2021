@@ -36,6 +36,9 @@ resource digitalocean_droplet nginx {
 
     ssh_keys = [ digitalocean_ssh_key.mykey.fingerprint ]
 
+    // server setup with cloud-init
+    //user_data = "./setup.yaml"
+
     connection {
         type = "ssh"
         user = "root"
@@ -56,9 +59,18 @@ resource digitalocean_droplet nginx {
     }
 
     // copy the generate nginx.conf to droplet /etc/nginx/nginx.conf
+    provisioner file {
+        source = "./nginx.conf"
+        destination = "/etc/nginx/nginx.conf"
+    }
 
     // restart nginx
     // /usr/sbin/nginx -s reload
+    provisioner remote-exec {
+        inline = [
+            "/usr/sbin/nginx -s reload"
+        ]
+    }
 }
 
 // local variables, not available outside of this 'module'
@@ -76,6 +88,13 @@ resource local_file externl_ports {
 }
 
 // generate the nginx.conf
+resource local_file nginx_conf {
+    filename = "nginx.conf"
+    content = templatefile("./nginx.conf.tpl", {
+        ports = docker_container.cont_dov[*].ports[0].external,
+        docker_host_ip = "128.199.168.12"
+    })
+}
 
 // outputs
 output image_name {

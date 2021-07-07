@@ -1,0 +1,19 @@
+- name: Check Nginx
+  hosts: all
+  tasks:
+
+  # runs against the inventory
+  - name: Check if /etc/nginx/ngnix.conf file exists
+    stat:
+      path: "/etc/nginx/nginx.conf"
+    register: f
+  - name: result of stat
+    debug:
+      msg: "{{ ansible_host }} - /etc/nginx/nginx.conf exists? {{ f.stat.exists}}"
+
+  - name: start nginx if ngnix is installed
+    become: true
+    systemd:
+      name: nginx
+      state: started
+    when: f.stat.exists

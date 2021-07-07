@@ -1,0 +1,35 @@
+- name: Install Nginx
+  hosts: apps
+  become: true
+  tasks:
+  - name: debug loop
+    debug:
+      msg: "Item: {{ item }}"
+    loop:
+    - nginx
+    - openssh-server
+  - name: Install nginx
+    apt:
+      name: "{{ item }}"
+      state: present
+    loop:
+    - nginx
+    - openssh-server
+  - name: Start nginx
+    systemd:
+      name: nginx
+      state: started
+  - name: create users
+    user:
+      name: "{{ item }}"
+      state: present
+    loop:
+    - fred
+    - barney
+  - name: Check if /etc/nginx/ngnix.conf file exists
+    stat:
+      path: "/etc/nginx/nginx.conf"
+    register: f
+  - name: result of stat
+    debug:
+      msg: "/etc/nginx/nginx.conf exists? {{ f.stat.exists}}"
