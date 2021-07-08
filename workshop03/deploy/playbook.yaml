@@ -1,0 +1,23 @@
+- name: Configure Code Server
+  hosts: code-server
+
+  tasks:
+  - name: Update code-server.service with the password
+    lineinfile:
+      path: "/lib/systemd/system/code-server.service"
+      regexp: __PLACEHOLDER__
+      line: "Environment=PASSWORD={{ cs_password }}"
+  - name: Update code-server.conf with the domain
+    lineinfile:
+      path: "/etc/nginx/sites-available/code-server.conf"
+      regexp: __PLACEHOLDER__
+      line: "server_name {{ cs_domain }};"
+
+  - name: Restart the services
+    systemd:
+      daemon_reload: yes
+      name: "{{ item }}"
+      state: restarted
+    loop:
+    - code-server.service
+    - nginx

@@ -48,3 +48,30 @@
       name: code-server.service
       enabled: yes
       state: started
+
+- name: Install and configure nginx
+  hosts: all # default name used by packer
+
+  tasks:
+  - name: Install nginx
+    apt:
+      name: nginx
+      update_cache: yes
+      state: present
+
+  - name: Copy code-server.conf file to /etc/nginx/sites-available
+    copy:
+      src: "./code-server.conf"
+      dest: "/etc/nginx/sites-available/code-server.conf"
+
+  - name: Link /etc/nginx/sites-available/code-server.conf to /etc/nginx/sites-enabled/code-server.conf
+    file:
+      src: "/etc/nginx/sites-available/code-server.conf"
+      dest: "/etc/nginx/sites-enabled/code-server.conf"
+      state: link
+
+  - name: Restart nginx service
+    systemd:
+      name: nginx
+      enabled: yes
+      state: started
