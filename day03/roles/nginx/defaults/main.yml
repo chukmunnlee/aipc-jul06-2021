@@ -1,0 +1,3 @@
+---
+# defaults file for nginx
+my_var: "This is my_var"

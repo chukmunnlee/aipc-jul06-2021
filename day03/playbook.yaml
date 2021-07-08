@@ -1,0 +1,6 @@
+- name: Test a role
+  hosts: all
+  roles:
+  - role: roles/nginx
+    vars:
+       my_var: "This is my >> MESSAGE <<"

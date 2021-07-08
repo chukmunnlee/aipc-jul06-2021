@@ -1,4 +1,4 @@
 # these are my ports
-    32774/tcp
-    32773/tcp
-    32775/tcp
+    32778/tcp
+    32777/tcp
+    32776/tcp

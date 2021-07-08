@@ -1,0 +1,5 @@
+---
+# tasks file for nginx
+- name: Echo a variable
+  debug:
+     msg: "This is a variable: {{ my_var }}"
