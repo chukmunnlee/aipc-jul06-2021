@@ -12,6 +12,11 @@ resource digitalocean_droplet nginx {
     region = var.droplet_region
 
     ssh_keys = [ data.digitalocean_ssh_key.fred.id ]
+
+    // automatically trust the remote host
+    provisioner local-exec {
+        command = "ssh-keyscan -H ${self.ipv4_address} >> ~/.ssh/known_hosts"
+    }
 }
 
 // local variables, not available outside of this 'module'

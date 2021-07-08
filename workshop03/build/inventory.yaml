@@ -1,0 +1,7 @@
+all:
+  hosts:
+    server0:
+      ansible_host: 178.128.101.216
+      ansible_connection: ssh
+      ansible_user: root
+      ansible_ssh_private_key_file: ../../../fred

@@ -1,0 +1,50 @@
+- name: Install Code Server
+  hosts: all # default name used by packer
+  vars:
+    cs_version: "3.10.2"
+    cs_dir: "code-server-{{ cs_version }}-linux-amd64"
+    download_dir: "/usr/local/opt"
+
+  tasks:
+  - name: Create directories
+    file:
+      path: "{{ item }}"
+      state: directory
+      mode: "0755"
+    loop:
+    - "{{ download_dir }}"
+    - "/var/lib/code-server"
+
+  - name: Check if the code-server directory exists
+    stat:
+      path: "{{ download_dir }}/{{ cs_dir }}"
+    register: f
+  - name: Download the release
+    # prevent this task from running if we have downloaded the release
+    unarchive:
+      src: "https://github.com/cdr/code-server/releases/download/v{{ cs_version }}/code-server-{{ cs_version }}-linux-amd64.tar.gz"
+      dest: "{{ download_dir }}"
+      remote_src: yes
+    when: not f.stat.exists
+
+  - name: Link files and directories
+    file:
+      src: "{{ download_dir }}/{{ cs_dir }}{{ item.src }}"
+      dest: "{{ item.dest }}"
+      state: link
+    loop:
+    - src: ""
+      dest: "/usr/lib/code-server"
+    - src: "/bin/code-server"
+      dest: "/usr/bin/code-server"
+
+  - name: Copy code-server.service to /lib/systemd/system directory
+    copy:
+      src: "./code-server.service"
+      dest: "/lib/systemd/system/code-server.service"
+
+  - name: Start and enable the code-server.service
+    systemd:
+      name: code-server.service
+      enabled: yes
+      state: started
